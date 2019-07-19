@@ -1,7 +1,7 @@
-<div id="occupySlider">
+<div id="occupySlider" (click)="toggleOccupied()">
     <div class="left-right-container">
             <div class="left"></div>
             <div class="right"></div>
     </div>
-    <div class="slide" (click)="toggleOccupied()"></div>
+    <div id="slide" [ngClass]="{'occupied': occupied}"></div>
 </div>

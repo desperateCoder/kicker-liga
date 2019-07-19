@@ -20,12 +20,16 @@
   .right {
     background-color: green;
   }
-  .slide {
+  #slide {
     position: absolute;
     z-index: 5;
     height: 100%;
-    width: 40%;
+    width: 49.9%;
     top: 0;
     background-color: #C0C0C0;
+
+    &.occupied{
+      right: 0;
+    }
   }
 }
