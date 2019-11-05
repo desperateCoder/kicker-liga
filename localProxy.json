@@ -1,0 +1,6 @@
+{
+  "/api": {
+    "target": "http://kickerliga.jankotreuner.de",
+    "secure": false
+  }
+}
