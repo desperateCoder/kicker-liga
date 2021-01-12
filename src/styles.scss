@@ -1,5 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
-body {
-  max-width: 1250px;
-  margin: auto;
+html {
+  background-color: #ebebeb;
+  font-family: sans-serif;
+  line-height: 1.15;
+  body {
+    max-width: 1250px;
+    margin: auto;
+    color: #333;
+  }
 }
