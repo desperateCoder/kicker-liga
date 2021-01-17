@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -9,6 +9,24 @@ import { RankingTableComponent } from './components/ranking-table/ranking-table.
 import { StartPageComponent } from './pages/start-page/start-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { HeaderComponent } from './components/header/header.component';
+import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular';
+
+function initializeKeycloak(keycloak: KeycloakService) {
+  return () =>
+    keycloak.init({
+      config: {
+        url: 'https://key.xchangevault.de/auth/',
+        realm: 'Kickerliga',
+        clientId: 'angular-app',
+      },
+      initOptions: {
+        onLoad: 'check-sso',
+        silentCheckSsoRedirectUri:
+          window.location.origin + '/assets/silent-check-sso.html',
+      },
+      bearerExcludedUrls: ['/assets'],
+    });
+}
 
 @NgModule({
   declarations: [
@@ -22,9 +40,17 @@ import { HeaderComponent } from './components/header/header.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    KeycloakAngularModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeKeycloak,
+      multi: true,
+      deps: [KeycloakService],
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
