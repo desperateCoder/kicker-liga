@@ -1,0 +1,326 @@
+openapi: 3.0.2
+info:
+  version: '0.0.1'
+
+  title: Kickerliga
+
+  # Describe your API here, you can use GFM (https://guides.github.com/features/mastering-markdown) here
+  description: |
+    Kickerliga-API
+    # Kurbeln verboten
+
+# A list of tags used by the definition with additional metadata.
+# The order of the tags can be used to reflect on their order by the parsing tools.
+tags:
+  - name: org
+    description: Organisation operations
+  - name: location
+    description: Location operations
+  - name: league
+    description: League operations
+  - name: team
+    description: Team operations
+  - name: user
+    description: Operations about user
+  - name: season
+    description: Season operations
+  - name: match
+    description: Match operations
+  - name: set
+    description: Set operations
+  - name: admin
+    description: Adminsitrations operations
+servers:
+  - url: 'http://example.com/api/v1' # TODO add URLs
+  - url: 'https://example.com/api/v1'
+
+paths:
+  '/org/':
+    get:
+      tags:
+        - org
+      summary: Get a list of Organisations the user has access to
+      operationId: getOrganisations
+      security:
+        - oauth:
+            - 'read:orgs' # TODO verify
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                $ref: '#/components/schemas/Organisation'
+        '403':
+          description: Forbidden
+    post:
+      tags:
+        - org
+      summary: create an Organisation
+      operationId: createOrganisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+        description: Organisation-Object, ID should be null
+        required: true
+      security:
+        - oauth:
+            - 'write:orgs' # TODO verify
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                $ref: '#/components/schemas/Organisation'
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict (organisation-name is already taken)
+
+  '/users/{username}': # path parameter in curly braces
+
+    # parameters list that are used with each operation for this path
+    parameters:
+      - name: pretty_print
+        in: query
+        description: Pretty print response
+        schema:
+          type: boolean
+    get: # documentation for GET operation for this path
+      tags:
+        - user
+
+      # summary is up to 120 symbold but we recommend to be shortest as possible
+      summary: Get user by user name
+
+      # you can use GFM in operation description too: https://guides.github.com/features/mastering-markdown
+      description: |
+        Some description of the operation.
+        You can use `markdown` here.
+
+      # operationId should be unique across the whole specification
+      operationId: getUserByName
+
+      # list of parameters for the operation
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be fetched
+          required: true
+          schema:
+            type: string
+        - name: with_email
+          in: query
+          description: Filter users without email
+          schema:
+            type: boolean
+
+      # security schemas applied to this operation
+      security:
+        - main_auth:
+            - 'read:users' # for oauth2 provide list of scopes here
+        - api_key: []
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organisation'
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+    # documentation for PUT operation for this path
+    put:
+      tags:
+        - User
+      summary: Updated user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be updated
+          required: true
+          schema:
+            type: string
+      security:
+        - main_auth:
+            - 'write:users'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid user supplied
+        '404':
+          description: User not found
+      # request body documentation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Updated user object
+        required: true
+
+# An object to hold reusable parts that can be used across the definition
+components:
+  schemas:
+    Organisation:
+      type: object
+      properties:
+        id:
+          description: Organisation ID
+          type: number
+          example: 1337
+        name:
+          description: User supplied organisation-name
+          type: string
+          minLength: 4
+          example: MyFancyStartup
+    Location:
+      type: object
+      properties:
+        id:
+          description: Location ID
+          type: number
+        organisationId:
+          description: Organisation ID
+          type: number
+        name:
+          description: User supplied location-name
+          type: string
+          minLength: 4
+          example: Berlin Office
+    League:
+      type: object
+      properties:
+        id:
+          description: League ID
+          type: number
+        locationId:
+          description: Location ID
+          type: number
+        name:
+          description: User supplied league-name
+          type: string
+          minLength: 4
+          example: 'Premiere League'
+    Season:
+      type: object
+      properties:
+        id:
+          description: Season ID
+          type: number
+        leagueId:
+          description: League ID
+          type: number
+        name:
+          description: User supplied season-name
+          type: string
+          minLength: 4
+          example: '2021 Playoffs'
+    Team:
+      type: object
+      properties:
+        id:
+          description: Location ID
+          type: number
+          example: 1337
+        name:
+          description: User supplied league-name
+          type: string
+          minLength: 4
+          example: 'Berlin Office'
+    MatchSet:
+      type: object
+      properties:
+        id:
+          description: MatchSet ID
+          type: number
+          example: 1337
+        matchId:
+          description: Match ID
+          type: number
+          example: 1337
+        firstTeam:
+          description: score of the first team
+          type: number
+          example: 10
+        secondTeam:
+          description: score of the second team
+          type: number
+    Match:
+      type: object
+      properties:
+        id:
+          description: Match ID
+          type: number
+        seasonId:
+          description: Season ID
+          type: number
+        firstTeam:
+          $ref: '#/components/schemas/Team'
+        secondTeam:
+          $ref: '#/components/schemas/Team'
+        results:
+          description: collection of set results
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchSet'
+    User:
+      type: object
+      properties:
+        username:
+          description: User supplied username
+          type: string
+          minLength: 4
+          example: John69
+        firstName:
+          description: User first name
+          type: string
+          minLength: 1
+          example: John
+        lastName:
+          description: User last name
+          type: string
+          minLength: 1
+          example: Doe
+        email:
+          description: User email address
+          type: string
+          format: test
+          example: john.smith@example.com
+  headers:
+    ExpiresAfter:
+      description: date in UTC when token expires
+      schema:
+        type: string
+        format: date-time
+  # Security scheme definitions that can be used across the definition.
+  securitySchemes:
+    oauth: # TODO evaluate
+      type: oauth2 # authorization type, one of: oauth2, apiKey, http
+      flows:
+        implicit:
+          authorizationUrl: 'http://example.com/api/oauth/dialog'
+          scopes:
+            'read:users': read users info
+            'write:users': modify or remove users
+    api_key:  # security definition name (you can name it as you want)
+      type: apiKey
+      # The following options are specific to apiKey type
+      in: header # Where API key will be passed: header or query
+      name: api_key # API key parameter name
+    basic_auth: # security definition name (you can name it as you want)
+      type: http
+      scheme: basic

@@ -10,6 +10,7 @@ import { StartPageComponent } from './pages/start-page/start-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { HeaderComponent } from './components/header/header.component';
 import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular';
+import {ApiModule} from '../../build/openapi';
 
 function initializeKeycloak(keycloak: KeycloakService) {
   return () =>
@@ -41,6 +42,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
     HttpClientModule,
     AppRoutingModule,
     KeycloakAngularModule,
+    ApiModule,
   ],
   providers: [
     {
