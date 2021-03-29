@@ -17,7 +17,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
     keycloak.init({
       config: {
         url: 'https://key.xchangevault.de/auth/',
-        realm: 'Kickerliga',
+        realm: 'Kickerliga-Staging',
         clientId: 'angular-app',
       },
       initOptions: {
